@@ -1,0 +1,13 @@
+{
+  "name": "casual-ordering-engine",
+  "version": "1.0.0",
+  "description": "Inspired by concepts used in Cloudflare Durable Objects, Discord Messaging Infrastructure and CockroachDB's Hybrid Logical Clocks.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
