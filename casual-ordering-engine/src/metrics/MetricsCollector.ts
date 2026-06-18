@@ -1,60 +1,45 @@
-export interface MetricsSnapshot {
-  hlc_drift_ms: number;
-  causal_gap_count: number;
-  out_of_order_delivery_rate: number;
-  clock_sync_failures: number;
-  total_events: number;
-  delivered_events: number;
-}
-
 export class MetricsCollector {
-  private hlcDriftMs = 0;
-  private causalGapCount = 0;
+  private hlcDrift = 0;
+  private causalGaps = 0;
   private outOfOrder = 0;
-  private clockSyncFailures = 0;
+  private clockFailures = 0;
 
-  private totalEvents = 0;
-  private deliveredEvents = 0;
+  private total = 0;
 
   recordEvent() {
-    this.totalEvents++;
+    this.total++;
   }
 
-  recordDelivery() {
-    this.deliveredEvents++;
+  recordDelivery() {}
+
+  recordCausalGap() {
+    this.causalGaps++;
   }
 
-  recordCausalGap(count = 1) {
-    this.causalGapCount += count;
+  recordOutOfOrder() {
+    this.outOfOrder++;
   }
 
-  recordOutOfOrder(count = 1) {
-    this.outOfOrder += count;
+  recordClockFailure() {
+    this.clockFailures++;
   }
 
-  recordClockSyncFailure(count = 1) {
-    this.clockSyncFailures += count;
+  updateHlcDrift(drift: number) {
+    this.hlcDrift = Math.max(this.hlcDrift, drift);
   }
 
-  updateHlcDrift(driftMs: number) {
-    this.hlcDriftMs = Math.max(this.hlcDriftMs, driftMs);
-  }
-
-  getSnapshot(): MetricsSnapshot {
+  snapshot() {
     return {
-      hlc_drift_ms: this.hlcDriftMs,
-      causal_gap_count: this.causalGapCount,
-      out_of_order_delivery_rate:
-        this.totalEvents === 0
-          ? 0
-          : this.outOfOrder / this.totalEvents,
-      clock_sync_failures: this.clockSyncFailures,
-      total_events: this.totalEvents,
-      delivered_events: this.deliveredEvents,
+      hlc_drift_ms: this.hlcDrift,
+      causal_gap_count: this.causalGaps,
+      out_of_order_rate:
+        this.total === 0 ? 0 : this.outOfOrder / this.total,
+      clock_sync_failures: this.clockFailures,
+      total_events: this.total,
     };
   }
 
   print() {
-    console.table(this.getSnapshot());
+    console.table(this.snapshot());
   }
 }

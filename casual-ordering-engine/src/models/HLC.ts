@@ -1,5 +1,5 @@
 export interface HLC {
-    physicalTime: number;
-    logicalCounter: number;
-    nodeId: string;
+  physical: number;
+  logical: number;
+  nodeId: string;
 }

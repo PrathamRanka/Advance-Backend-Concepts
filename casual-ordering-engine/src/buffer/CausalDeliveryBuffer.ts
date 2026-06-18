@@ -1,26 +1,36 @@
 import { Event } from "../models/Event";
+import { Logger } from "../utils/logger";
+import { MetricsCollector } from "../metrics/MetricsCollector";
 
 export class CausalDeliveryBuffer {
   private buffer: Event[] = [];
+
+  constructor(
+    private logger: Logger,
+    private metrics: MetricsCollector
+  ) {}
 
   add(event: Event) {
     this.buffer.push(event);
 
     this.buffer.sort((a, b) => {
-      if (a.hlc.physicalTime !== b.hlc.physicalTime) {
-        return a.hlc.physicalTime - b.hlc.physicalTime;
+      if (a.hlc.physical !== b.hlc.physical) {
+        return a.hlc.physical - b.hlc.physical;
       }
-
-      return (
-        a.hlc.logicalCounter -
-        b.hlc.logicalCounter
-      );
+      return a.hlc.logical - b.hlc.logical;
     });
+
+    this.logger.debug("event_buffered", event);
   }
 
   flush(): Event[] {
-    const events = [...this.buffer];
+    const out = [...this.buffer];
     this.buffer = [];
-    return events;
+
+    this.logger.info("buffer_flushed", {
+      count: out.length,
+    });
+
+    return out;
   }
 }

@@ -1,39 +1,33 @@
-type LogLevel = "info" | "warn" | "error" | "debug";
-
-interface LogPayload {
-  nodeId?: string;
-  event?: string;
-  message: string;
-  meta?: Record<string, any>;
-}
+export type LogLevel = "info" | "warn" | "error" | "debug";
 
 export class Logger {
-  constructor(private readonly nodeId: string) {}
+  constructor(private nodeId: string) {}
 
-  private log(level: LogLevel, payload: LogPayload) {
-    const entry = {
-      timestamp: new Date().toISOString(),
-      level,
-      nodeId: this.nodeId,
-      ...payload,
-    };
-
-    console.log(JSON.stringify(entry));
+  log(level: LogLevel, message: string, meta?: any) {
+    console.log(
+      JSON.stringify({
+        ts: Date.now(),
+        level,
+        nodeId: this.nodeId,
+        message,
+        meta,
+      })
+    );
   }
 
-  info(message: string, meta?: Record<string, any>) {
-    this.log("info", { message, meta });
+  info(msg: string, meta?: any) {
+    this.log("info", msg, meta);
   }
 
-  warn(message: string, meta?: Record<string, any>) {
-    this.log("warn", { message, meta });
+  warn(msg: string, meta?: any) {
+    this.log("warn", msg, meta);
   }
 
-  error(message: string, meta?: Record<string, any>) {
-    this.log("error", { message, meta });
+  error(msg: string, meta?: any) {
+    this.log("error", msg, meta);
   }
 
-  debug(message: string, meta?: Record<string, any>) {
-    this.log("debug", { message, meta });
+  debug(msg: string, meta?: any) {
+    this.log("debug", msg, meta);
   }
 }

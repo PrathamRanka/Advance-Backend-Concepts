@@ -1,15 +1,3 @@
-import { HybridLogicalClock } from "./clock/HybridLogicalClock";
-import { EventPublisher } from "./publisher/EventPublisher";
-import { CausalDeliveryBuffer } from "./buffer/CausalDeliveryBuffer";
+import { NetworkPartitionSimulator } from "./simulator/NetworkPartitionSimulator";
 
-export class DistributedNode {
-  public readonly clock: HybridLogicalClock;
-  public readonly publisher: EventPublisher;
-  public readonly buffer: CausalDeliveryBuffer;
-
-  constructor(public readonly nodeId: string) {
-    this.clock = new HybridLogicalClock(nodeId);
-    this.publisher = new EventPublisher(this.clock);
-    this.buffer = new CausalDeliveryBuffer();
-  }
-}
+new NetworkPartitionSimulator().run();

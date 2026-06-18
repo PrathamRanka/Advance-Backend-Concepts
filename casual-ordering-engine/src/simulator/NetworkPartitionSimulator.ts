@@ -1,15 +1,26 @@
-import { HybridLogicalClock } from "../clock/HybridLogicalClock";
-import { EventPublisher } from "../publisher/EventPublisher";
-import { CausalDeliveryBuffer } from "../buffer/CausalDeliveryBuffer";
+import { DistributedNode } from "../node/DistributedNode";
 
-export class DistributedNode {
-  public readonly clock: HybridLogicalClock;
-  public readonly publisher: EventPublisher;
-  public readonly buffer: CausalDeliveryBuffer;
+export class NetworkPartitionSimulator {
+  run() {
+    const A = new DistributedNode("A");
+    const B = new DistributedNode("B");
 
-  constructor(public readonly nodeId: string) {
-    this.clock = new HybridLogicalClock(nodeId);
-    this.publisher = new EventPublisher(this.clock);
-    this.buffer = new CausalDeliveryBuffer();
+    const e1 = A.publisher.publish("user_created");
+
+    console.log("\n--- PARTITION ---\n");
+
+    const e2 = A.publisher.publish("email_sent");
+    const e3 = B.publisher.publish("email_received");
+
+    A.buffer.add(e2);
+    A.buffer.add(e3);
+
+    console.log("\n--- MERGE ---\n");
+
+    const merged = A.buffer.flush();
+
+    console.log(merged);
+
+    A.metrics.print();
   }
 }

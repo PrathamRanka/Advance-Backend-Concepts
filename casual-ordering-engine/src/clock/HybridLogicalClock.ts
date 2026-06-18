@@ -4,51 +4,45 @@ export class HybridLogicalClock {
   private lastPhysical = Date.now();
   private logical = 0;
 
-  constructor(private readonly nodeId: string) {}
+  constructor(private nodeId: string) {}
 
-  public now(): HLC {
-    const current = Date.now();
+  now(): HLC {
+    const now = Date.now();
 
-    if (current > this.lastPhysical) {
-      this.lastPhysical = current;
+    if (now > this.lastPhysical) {
+      this.lastPhysical = now;
       this.logical = 0;
     } else {
       this.logical++;
     }
 
     return {
-      physicalTime: this.lastPhysical,
-      logicalCounter: this.logical,
+      physical: this.lastPhysical,
+      logical: this.logical,
       nodeId: this.nodeId,
     };
   }
 
-  public merge(remote: HLC): HLC {
-    const current = Date.now();
+  merge(remote: HLC): HLC {
+    const now = Date.now();
 
-    const maxPhysical = Math.max(
-      current,
-      this.lastPhysical,
-      remote.physicalTime
-    );
+    const max = Math.max(now, this.lastPhysical, remote.physical);
 
-    if (maxPhysical === this.lastPhysical &&
-        maxPhysical === remote.physicalTime) {
-      this.logical =
-        Math.max(this.logical, remote.logicalCounter) + 1;
-    } else if (maxPhysical === this.lastPhysical) {
+    if (max === this.lastPhysical && max === remote.physical) {
+      this.logical = Math.max(this.logical, remote.logical) + 1;
+    } else if (max === this.lastPhysical) {
       this.logical++;
-    } else if (maxPhysical === remote.physicalTime) {
-      this.logical = remote.logicalCounter + 1;
+    } else if (max === remote.physical) {
+      this.logical = remote.logical + 1;
     } else {
       this.logical = 0;
     }
 
-    this.lastPhysical = maxPhysical;
+    this.lastPhysical = max;
 
     return {
-      physicalTime: this.lastPhysical,
-      logicalCounter: this.logical,
+      physical: this.lastPhysical,
+      logical: this.logical,
       nodeId: this.nodeId,
     };
   }
