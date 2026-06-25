@@ -10,7 +10,7 @@ A production-style distributed systems simulation demonstrating:
 
 ---
 
-## 🧠 Problem
+##  Problem
 
 At scale, retries don’t fix failures — they amplify them.
 
@@ -20,8 +20,7 @@ This project simulates how:
 = system-wide cascading collapse
 
 ---
-
-## ⚙️ Architecture
+## Architecture
 
 Traffic Generator
       ↓
@@ -35,7 +34,7 @@ Downstream Service (failure injected)
 
 ---
 
-## 🚀 Run
+## Run
 
 ```bash
 npm install
